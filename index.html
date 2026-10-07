@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>StokBakeri — Pengurusan Stok Bahan Bakeri & Pastri</title>
+  <meta name="description" content="Sistem pengurusan stok bahan, peralatan dan pembungkusan untuk dapur bakeri & pastri. Rekod stok terima, stok keluar dan penggunaan amali pensyarah.">
+  <meta name="theme-color" content="#8c4a16" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1c1410" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="StokBakeri">
+  <meta property="og:title" content="StokBakeri">
+  <meta property="og:description" content="Pengurusan stok bahan bakeri & pastri.">
+  <meta property="og:image" content="assets/icons/icon-512.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script>
+    // Apply saved theme before first paint to avoid a flash.
+    try {
+      var t = localStorage.getItem('stok_bakeri_theme');
+      if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <!-- Icon sprite -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+      <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></symbol>
+      <symbol id="i-swap" viewBox="0 0 24 24"><path d="M7 4v14M3 14l4 4 4-4M17 20V6M13 10l4-4 4 4"/></symbol>
+      <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 13l2 2 4-4"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+      <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m14 6 4 4"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+      <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M5 20h14"/></symbol>
+      <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 20V8M6 14l6-6 6 6M5 4h14"/></symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M6 10l6-6 6 6M5 20h14"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    </defs>
+  </svg>
+
+  <a class="skip-link" href="#main">Langkau ke kandungan</a>
+
+  <div class="app">
+    <!-- Sidebar (desktop) / bottom bar (mobile) -->
+    <nav class="nav" aria-label="Navigasi utama">
+      <a class="brand" href="#/papan">
+        <img src="assets/icons/icon-192.png" alt="" width="36" height="36">
+        <span><strong>StokBakeri</strong><small>Bahan Bakeri & Pastri</small></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#/papan" data-view="papan"><svg class="i"><use href="#i-home"/></svg><span>Papan Utama</span></a></li>
+        <li><a href="#/bahan" data-view="bahan"><svg class="i"><use href="#i-box"/></svg><span>Bahan</span></a></li>
+        <li><a href="#/transaksi" data-view="transaksi"><svg class="i"><use href="#i-swap"/></svg><span>Transaksi</span></a></li>
+        <li><a href="#/data" data-view="data"><svg class="i"><use href="#i-file"/></svg><span>Laporan & Data</span></a></li>
+      </ul>
+      <div class="nav-foot">
+        <span id="nav-count">0 bahan</span>
+        <span class="saved"><svg class="i"><use href="#i-check"/></svg>Disimpan dalam peranti ini</span>
+      </div>
+    </nav>
+
+    <div class="main-col">
+      <header class="topbar">
+        <h1 id="page-title">Papan Utama</h1>
+        <div class="topbar-actions">
+          <label class="lecturer-pick" title="Pensyarah aktif">
+            <svg class="i"><use href="#i-users"/></svg>
+            <span class="sr-only">Pensyarah aktif</span>
+            <select id="active-lecturer"></select>
+          </label>
+          <button class="btn btn-ghost icon-only" id="btn-lecturers" title="Urus senarai pensyarah" aria-label="Urus senarai pensyarah"><svg class="i"><use href="#i-edit"/></svg></button>
+          <button class="btn btn-ghost icon-only" id="btn-theme" title="Tukar tema" aria-label="Tukar tema"><svg class="i"><use id="theme-icon" href="#i-moon"/></svg></button>
+        </div>
+      </header>
+
+      <main id="main" tabindex="-1">
+        <!-- Quick actions -->
+        <div class="quick-actions">
+          <button class="btn btn-primary" data-open="tx"><svg class="i"><use href="#i-swap"/></svg>Rekod Stok</button>
+          <button class="btn btn-green" data-open="amali"><svg class="i"><use href="#i-clipboard"/></svg>Penggunaan Amali</button>
+        </div>
+
+        <!-- PAPAN UTAMA -->
+        <section class="view" id="view-papan" aria-labelledby="page-title">
+          <div class="kpis">
+            <div class="kpi"><span class="kpi-label">Jenis bahan</span><strong id="kpi-items">0</strong><span class="kpi-sub">berdaftar</span></div>
+            <div class="kpi"><span class="kpi-label">Stok rendah</span><strong id="kpi-low" class="t-warn">0</strong><span class="kpi-sub">perlu ditambah</span></div>
+            <div class="kpi"><span class="kpi-label">Habis</span><strong id="kpi-out" class="t-bad">0</strong><span class="kpi-sub">tiada stok</span></div>
+            <div class="kpi"><span class="kpi-label">Transaksi bulan ini</span><strong id="kpi-month">0</strong><span class="kpi-sub" id="kpi-month-sub">—</span></div>
+          </div>
+
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head">
+                <h2>Perlu perhatian</h2>
+                <a class="link" href="#/bahan?status=rendah">Lihat semua <svg class="i"><use href="#i-arrow"/></svg></a>
+              </div>
+              <ul class="list" id="attention-list"></ul>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h2>Pergerakan terkini</h2>
+                <a class="link" href="#/transaksi">Log penuh <svg class="i"><use href="#i-arrow"/></svg></a>
+              </div>
+              <ul class="list" id="recent-list"></ul>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h2>Stok semasa</h2>
+                <p class="muted small">Stok semasa = stok awal + terima − keluar</p>
+              </div>
+              <button class="btn btn-soft" data-open="item"><svg class="i"><use href="#i-plus"/></svg>Tambah bahan</button>
+            </div>
+            <div class="table-wrap">
+              <table class="table">
+                <thead><tr><th>Bahan</th><th>Kategori</th><th class="num">Awal</th><th class="num">+ Terima</th><th class="num">− Keluar</th><th class="num">Semasa</th><th>Status</th></tr></thead>
+                <tbody id="stock-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- BAHAN -->
+        <section class="view" id="view-bahan" hidden>
+          <div class="toolbar">
+            <label class="search"><svg class="i"><use href="#i-search"/></svg><span class="sr-only">Cari bahan</span><input type="search" id="item-search" placeholder="Cari kod, nama, lokasi…"></label>
+            <select id="item-cat" aria-label="Tapis kategori"><option value="">Semua kategori</option></select>
+            <select id="item-status" aria-label="Tapis status">
+              <option value="">Semua status</option>
+              <option value="cukup">Mencukupi</option>
+              <option value="rendah">Stok rendah & habis</option>
+              <option value="habis">Tiada stok</option>
+            </select>
+            <button class="btn btn-primary" data-open="item"><svg class="i"><use href="#i-plus"/></svg>Tambah bahan</button>
+          </div>
+          <div class="card flush">
+            <div class="table-wrap">
+              <table class="table">
+                <thead><tr><th>Kod</th><th>Nama</th><th>Kategori</th><th>Unit</th><th class="num">Semasa</th><th class="num">Minima</th><th>Status</th><th>Lokasi</th><th class="actions"><span class="sr-only">Tindakan</span></th></tr></thead>
+                <tbody id="items-tbody"></tbody>
+              </table>
+            </div>
+            <p class="empty" id="items-empty" hidden>Tiada bahan dijumpai.</p>
+          </div>
+        </section>
+
+        <!-- TRANSAKSI -->
+        <section class="view" id="view-transaksi" hidden>
+          <div class="toolbar">
+            <label class="search"><svg class="i"><use href="#i-search"/></svg><span class="sr-only">Cari transaksi</span><input type="search" id="tx-search" placeholder="Cari bahan, nama, pensyarah, catatan…"></label>
+            <select id="tx-type" aria-label="Tapis jenis">
+              <option value="">Semua jenis</option>
+              <option value="TERIMA">Stok terima (+)</option>
+              <option value="KELUAR">Stok keluar (−)</option>
+            </select>
+            <label class="date-f"><span>Dari</span><input type="date" id="tx-from"></label>
+            <label class="date-f"><span>Hingga</span><input type="date" id="tx-to"></label>
+          </div>
+          <div class="card flush">
+            <div class="table-wrap">
+              <table class="table">
+                <thead><tr><th>Tarikh</th><th>Jenis</th><th>Bahan</th><th class="num">Kuantiti</th><th>Oleh</th><th>Pensyarah</th><th>Catatan</th><th class="actions"><span class="sr-only">Tindakan</span></th></tr></thead>
+                <tbody id="tx-tbody"></tbody>
+              </table>
+            </div>
+            <p class="empty" id="tx-empty" hidden>Tiada rekod transaksi dijumpai.</p>
+          </div>
+          <p class="muted small" id="tx-summary"></p>
+        </section>
+
+        <!-- LAPORAN & DATA -->
+        <section class="view" id="view-data" hidden>
+          <div class="grid-2">
+            <div class="card pad">
+              <h2>Laporan</h2>
+              <p class="muted small">Muat turun stok semasa dan log transaksi.</p>
+              <div class="stack">
+                <button class="btn btn-green wide" id="btn-xlsx"><svg class="i"><use href="#i-down"/></svg>Laporan penuh Excel (.xlsx)</button>
+                <button class="btn btn-soft wide" id="btn-csv"><svg class="i"><use href="#i-down"/></svg>Ringkasan stok CSV</button>
+              </div>
+            </div>
+            <div class="card pad">
+              <h2>Import bahan dari Excel</h2>
+              <p class="muted small">Lajur yang dibaca: <code>Kod Item</code>, <code>Nama Bahan / Peralatan</code>, <code>Kategori</code>, <code>Unit</code>, <code>Stok Awal</code>, <code>Minima</code>, <code>Lokasi</code>. Kod yang sudah wujud akan dikemaskini.</p>
+              <label class="file-btn btn btn-soft wide"><svg class="i"><use href="#i-upload"/></svg>Pilih fail .xlsx / .xls<input type="file" id="file-xlsx" accept=".xlsx,.xls,.csv" hidden></label>
+            </div>
+            <div class="card pad">
+              <h2>Sandaran data</h2>
+              <p class="muted small">Data disimpan dalam pelayar peranti ini sahaja. Simpan sandaran untuk pindah ke telefon/komputer lain atau elak kehilangan data.</p>
+              <div class="stack">
+                <button class="btn btn-primary wide" id="btn-backup"><svg class="i"><use href="#i-down"/></svg>Muat turun sandaran (.json)</button>
+                <label class="file-btn btn btn-soft wide"><svg class="i"><use href="#i-upload"/></svg>Pulihkan dari sandaran<input type="file" id="file-backup" accept=".json,application/json" hidden></label>
+              </div>
+            </div>
+            <div class="card pad danger">
+              <h2>Zon bahaya</h2>
+              <p class="muted small">Tindakan ini tidak boleh dibatalkan. Muat turun sandaran dahulu.</p>
+              <div class="stack">
+                <button class="btn btn-danger-soft wide" data-danger="tx"><svg class="i"><use href="#i-trash"/></svg>Padam semua log transaksi</button>
+                <button class="btn btn-danger-soft wide" data-danger="items"><svg class="i"><use href="#i-trash"/></svg>Padam semua bahan & transaksi</button>
+                <button class="btn btn-danger wide" data-danger="reset"><svg class="i"><use href="#i-trash"/></svg>Reset sistem & muat data contoh</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- DIALOG: Bahan -->
+  <dialog id="dlg-item" class="dialog">
+    <form method="dialog" id="form-item" novalidate>
+      <header><h2 id="dlg-item-title">Tambah bahan</h2><button type="button" class="btn btn-ghost icon-only" data-close aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button></header>
+      <div class="dlg-body">
+        <input type="hidden" name="id">
+        <div class="row-2">
+          <label class="field"><span>Kod item *</span><input name="code" required maxlength="30" autocomplete="off"></label>
+          <label class="field"><span>Kategori *</span><select name="category" required></select></label>
+        </div>
+        <label class="field"><span>Nama bahan / peralatan *</span><input name="name" required maxlength="120" placeholder="Cth: Tepung High Protein"></label>
+        <div class="row-3">
+          <label class="field"><span>Unit *</span><select name="unit" required></select></label>
+          <label class="field"><span>Stok awal *</span><input name="initialStock" type="number" inputmode="decimal" step="any" min="0" required value="0"></label>
+          <label class="field"><span>Amaran minima *</span><input name="minStock" type="number" inputmode="decimal" step="any" min="0" required value="5"></label>
+        </div>
+        <label class="field"><span>Lokasi simpanan</span><input name="location" maxlength="60" placeholder="Cth: Rak A1 / Peti Sejuk 2"></label>
+        <p class="form-error" role="alert"></p>
+      </div>
+      <footer><button type="button" class="btn btn-ghost" data-close>Batal</button><button type="submit" class="btn btn-primary" value="save">Simpan</button></footer>
+    </form>
+  </dialog>
+
+  <!-- DIALOG: Transaksi -->
+  <dialog id="dlg-tx" class="dialog">
+    <form method="dialog" id="form-tx" novalidate>
+      <header><h2 id="dlg-tx-title">Rekod pergerakan stok</h2><button type="button" class="btn btn-ghost icon-only" data-close aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button></header>
+      <div class="dlg-body">
+        <input type="hidden" name="id">
+        <div class="segmented" role="radiogroup" aria-label="Jenis transaksi">
+          <label class="seg-in"><input type="radio" name="type" value="TERIMA" checked><span><svg class="i"><use href="#i-down"/></svg>Stok terima (+)</span></label>
+          <label class="seg-out"><input type="radio" name="type" value="KELUAR"><span><svg class="i"><use href="#i-up"/></svg>Stok keluar (−)</span></label>
+        </div>
+        <label class="field"><span>Bahan *</span><select name="itemId" required></select></label>
+        <p class="hint" id="tx-stock-hint"></p>
+        <div class="row-2">
+          <label class="field"><span>Kuantiti *</span><input name="quantity" type="number" inputmode="decimal" step="any" min="0" required></label>
+          <label class="field"><span>Tarikh *</span><input name="date" type="date" required></label>
+        </div>
+        <div class="row-2">
+          <label class="field"><span>Diambil / diterima oleh *</span><input name="person" required maxlength="80" placeholder="Cth: Ahmad (Pelajar)"></label>
+          <label class="field"><span>Pensyarah *</span><input name="lecturer" required maxlength="80" list="lecturer-options"></label>
+        </div>
+        <label class="field"><span>Catatan / resepi</span><input name="notes" maxlength="160" placeholder="Cth: Amali Kek Chiffon / Pembekal Beryls"></label>
+        <p class="form-error" role="alert"></p>
+      </div>
+      <footer><button type="button" class="btn btn-ghost" data-close>Batal</button><button type="submit" class="btn btn-primary" value="save">Simpan rekod</button></footer>
+    </form>
+  </dialog>
+
+  <!-- DIALOG: Penggunaan amali -->
+  <dialog id="dlg-amali" class="dialog wide">
+    <form method="dialog" id="form-amali" novalidate>
+      <header><div><h2>Borang penggunaan amali</h2><p class="muted small">Setiap baris akan direkod sebagai stok keluar.</p></div><button type="button" class="btn btn-ghost icon-only" data-close aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button></header>
+      <div class="dlg-body">
+        <div class="row-3">
+          <label class="field"><span>Pensyarah *</span><input name="lecturer" required maxlength="80" list="lecturer-options"></label>
+          <label class="field"><span>Resepi / kelas *</span><input name="recipe" required maxlength="100" placeholder="Cth: Kek Chiffon & Doughnut"></label>
+          <label class="field"><span>Tarikh *</span><input name="date" type="date" required></label>
+        </div>
+        <label class="field"><span>Diambil oleh</span><input name="person" maxlength="80" value="Sesi Amali Pelajar"></label>
+        <div id="amali-groups"></div>
+        <p class="form-error" role="alert"></p>
+      </div>
+      <footer><button type="button" class="btn btn-ghost" data-close>Batal</button><button type="submit" class="btn btn-green" value="save">Sahkan & potong stok</button></footer>
+    </form>
+  </dialog>
+
+  <!-- DIALOG: Pensyarah -->
+  <dialog id="dlg-lecturers" class="dialog">
+    <form method="dialog" id="form-lecturer" novalidate>
+      <header><h2>Senarai pensyarah</h2><button type="button" class="btn btn-ghost icon-only" data-close aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button></header>
+      <div class="dlg-body">
+        <div class="inline-add">
+          <label class="field grow"><span class="sr-only">Nama pensyarah baru</span><input name="name" maxlength="80" placeholder="Nama pensyarah baru"></label>
+          <button type="submit" class="btn btn-primary" value="add"><svg class="i"><use href="#i-plus"/></svg>Tambah</button>
+        </div>
+        <p class="form-error" role="alert"></p>
+        <ul class="list compact" id="lecturer-list"></ul>
+      </div>
+      <footer><button type="button" class="btn btn-ghost" data-close>Tutup</button></footer>
+    </form>
+  </dialog>
+
+  <!-- DIALOG: Sahkan -->
+  <dialog id="dlg-confirm" class="dialog small">
+    <form method="dialog">
+      <div class="dlg-body center">
+        <div class="confirm-icon"><svg class="i"><use href="#i-alert"/></svg></div>
+        <h2 id="confirm-title">Padam?</h2>
+        <p class="muted" id="confirm-desc"></p>
+      </div>
+      <footer><button class="btn btn-ghost" value="cancel">Batal</button><button class="btn btn-danger" value="ok" id="confirm-ok">Padam</button></footer>
+    </form>
+  </dialog>
+
+  <datalist id="lecturer-options"></datalist>
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+  <noscript><p class="noscript">StokBakeri memerlukan JavaScript.</p></noscript>
+
+  <script src="assets/js/util.js"></script>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

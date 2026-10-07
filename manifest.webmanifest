@@ -1,0 +1,16 @@
+{
+  "name": "StokBakeri — Pengurusan Stok Bakeri & Pastri",
+  "short_name": "StokBakeri",
+  "description": "Rekod stok bahan, peralatan dan pembungkusan dapur bakeri & pastri.",
+  "lang": "ms",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#faf6f0",
+  "theme_color": "#8c4a16",
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
