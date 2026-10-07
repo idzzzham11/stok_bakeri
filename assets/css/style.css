@@ -284,6 +284,18 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--ba
 .amali-row .left { font-size: .75rem; color: var(--muted); grid-column: 1 / -1; margin-top: -4px; }
 .amali-row .left.warn { color: var(--bad); font-weight: 600; }
 
+/* Sync status */
+.sync-chip { display: inline-flex; align-items: center; gap: 7px; font-size: .8rem; font-weight: 600; color: var(--muted); padding: 6px 10px; border-radius: 999px; background: var(--surface-2); white-space: nowrap; }
+.sync-chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex: none; }
+.sync-chip[data-mode="online"] .dot { background: var(--green); }
+.sync-chip[data-mode="offline"] .dot, .sync-chip[data-mode="auth"] .dot { background: var(--warn); }
+.sync-chip[data-mode="connecting"] .dot { background: var(--blue); animation: blink 1s infinite alternate; }
+@keyframes blink { to { opacity: .3; } }
+.db-state { font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.db-state .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--muted); }
+.db-state[data-mode="online"] .dot { background: var(--green); }
+.db-state[data-mode="offline"] .dot, .db-state[data-mode="auth"] .dot { background: var(--warn); }
+
 /* Toasts */
 .toasts { position: fixed; right: 20px; bottom: 20px; z-index: 1000; display: grid; gap: 8px; pointer-events: none; }
 .toast { background: #2a1d14; color: #fff6e8; padding: 11px 16px; border-radius: 12px; box-shadow: 0 8px 24px rgb(0 0 0 / 25%); font-size: .88rem; font-weight: 500; display: flex; align-items: center; gap: 10px; max-width: 360px; animation: pop .2s ease-out; pointer-events: auto; }
@@ -314,6 +326,8 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--ba
   .topbar { padding: 10px 16px; padding-top: max(10px, env(safe-area-inset-top)); }
   h1 { font-size: 1.08rem; }
   .lecturer-pick { padding-left: 10px; }
+  .sync-chip { padding: 8px; }
+  .sync-chip .sync-text { display: none; }
   .lecturer-pick select { max-width: 110px; font-size: .85rem; }
   main { padding: 16px 16px 28px; }
   .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }

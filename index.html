@@ -70,7 +70,7 @@
       </ul>
       <div class="nav-foot">
         <span id="nav-count">0 bahan</span>
-        <span class="saved"><svg class="i"><use href="#i-check"/></svg>Disimpan dalam peranti ini</span>
+        <span class="saved" id="nav-sync">Disimpan dalam peranti ini</span>
       </div>
     </nav>
 
@@ -78,6 +78,7 @@
       <header class="topbar">
         <h1 id="page-title">Papan Utama</h1>
         <div class="topbar-actions">
+          <span class="sync-chip" id="sync-chip" data-mode="local" role="status"><span class="dot"></span><span class="sync-text">Peranti ini</span></span>
           <label class="lecturer-pick" title="Pensyarah aktif">
             <svg class="i"><use href="#i-users"/></svg>
             <span class="sr-only">Pensyarah aktif</span>
@@ -200,12 +201,17 @@
             </div>
             <div class="card pad">
               <h2>Import bahan dari Excel</h2>
-              <p class="muted small">Lajur yang dibaca: <code>Kod Item</code>, <code>Nama Bahan / Peralatan</code>, <code>Kategori</code>, <code>Unit</code>, <code>Stok Awal</code>, <code>Minima</code>, <code>Lokasi</code>. Kod yang sudah wujud akan dikemaskini.</p>
+              <p class="muted small">Lajur yang dibaca: <code>Kod Item</code>, <code>Nama Bahan / Peralatan</code>, <code>Kategori</code>, <code>Unit</code>, <code>Stok Semasa</code> (atau <code>Stok Awal</code>), <code>Minima</code>, <code>Lokasi</code>. Kod yang sudah wujud akan dikemaskini. Log transaksi tidak diimport.</p>
               <label class="file-btn btn btn-soft wide"><svg class="i"><use href="#i-upload"/></svg>Pilih fail .xlsx / .xls<input type="file" id="file-xlsx" accept=".xlsx,.xls,.csv" hidden></label>
+            </div>
+            <div class="card pad" id="db-card">
+              <h2>Pangkalan data</h2>
+              <p class="db-state" id="db-state"></p>
+              <p class="muted small" id="db-help"></p>
             </div>
             <div class="card pad">
               <h2>Sandaran data</h2>
-              <p class="muted small">Data disimpan dalam pelayar peranti ini sahaja. Simpan sandaran untuk pindah ke telefon/komputer lain atau elak kehilangan data.</p>
+              <p class="muted small">Simpan salinan semua data sebagai fail. Gunakan untuk pindah data atau sebagai simpanan keselamatan.</p>
               <div class="stack">
                 <button class="btn btn-primary wide" id="btn-backup" data-download><svg class="i"><use href="#i-down"/></svg>Muat turun sandaran (.json)</button>
                 <label class="file-btn btn btn-soft wide"><svg class="i"><use href="#i-upload"/></svg>Pulihkan dari sandaran<input type="file" id="file-backup" accept=".json,application/json" hidden></label>
@@ -319,6 +325,19 @@
         <p class="muted" id="confirm-desc"></p>
       </div>
       <footer><button class="btn btn-ghost" value="cancel">Batal</button><button class="btn btn-danger" value="ok" id="confirm-ok">Padam</button></footer>
+    </form>
+  </dialog>
+
+  <!-- DIALOG: Kata laluan -->
+  <dialog id="dlg-password" class="dialog small">
+    <form method="dialog" id="form-password" novalidate>
+      <header><h2>Masukkan kata laluan</h2></header>
+      <div class="dlg-body">
+        <p class="muted small">Data StokBakeri ini dikongsi dan dilindungi kata laluan. Minta kata laluan daripada pentadbir.</p>
+        <label class="field"><span>Kata laluan</span><input name="password" type="password" autocomplete="current-password" required></label>
+        <p class="form-error" role="alert"></p>
+      </div>
+      <footer><button type="submit" class="btn btn-primary" value="ok">Masuk</button></footer>
     </form>
   </dialog>
 

@@ -526,7 +526,8 @@
       const name = pick(r, ['nama bahan / peralatan', 'nama bahan', 'nama', 'name']);
       if (!name) return null;
       const category = pick(r, ['kategori', 'category']);
-      const stock = pick(r, ['stok awal', 'initialstock', 'stok semasa', 'stoksemasa']);
+      // Transactions are not imported, so the current stock becomes the starting stock.
+      const stock = pick(r, ['stok semasa', 'stoksemasa', 'stok awal', 'initialstock']);
       const min = pick(r, ['minima', 'amaran minima', 'minstock']);
       const out = { name };
       const code = pick(r, ['kod item', 'kod', 'code']);
@@ -555,7 +556,7 @@
     try { data = JSON.parse(await file.text()); } catch (e) { return toast('Fail bukan sandaran JSON yang sah.', true); }
     if (!data || !Array.isArray(data.items)) return toast('Fail sandaran tidak sah.', true);
     const ok = await confirmDialog('Pulihkan sandaran?',
-      `Data semasa akan diganti dengan ${data.items.length} bahan dan ${(data.transactions || []).length} transaksi daripada sandaran.`, 'Pulihkan');
+      `Data semasa${shared() ? ' (untuk semua pengguna)' : ''} akan diganti dengan ${data.items.length} bahan dan ${(data.transactions || []).length} transaksi daripada sandaran.`, 'Pulihkan');
     if (!ok) return;
     try { S.restoreBackup(data); toast('Data dipulihkan.'); } catch (e) { toast(e.message, true); }
   }
@@ -597,11 +598,11 @@
         S.deleteTx(d.delTx); toast('Rekod dipadam.');
       }
     } else if (d.danger === 'tx') {
-      if (await confirmDialog('Padam semua log transaksi?', `${S.state.tx.length} rekod akan dipadam. Senarai bahan kekal.`)) { S.clearTx(); toast('Semua log transaksi dipadam.'); }
+      if (await confirmDialog('Padam semua log transaksi?', `${S.state.tx.length} rekod akan dipadam${shared() ? ' untuk semua pengguna' : ''}. Senarai bahan kekal.`)) { S.clearTx(); toast('Semua log transaksi dipadam.'); }
     } else if (d.danger === 'items') {
-      if (await confirmDialog('Padam semua bahan?', 'Semua bahan dan semua transaksi akan dipadam.')) { S.clearAll(); toast('Semua bahan dipadam.'); }
+      if (await confirmDialog('Padam semua bahan?', 'Semua bahan dan semua transaksi akan dipadam' + (shared() ? ' untuk semua pengguna.' : '.'))) { S.clearAll(); toast('Semua bahan dipadam.'); }
     } else if (d.danger === 'reset') {
-      if (await confirmDialog('Reset sistem?', 'Semua data akan dipadam dan diganti dengan data contoh.', 'Reset')) { S.reset(); toast('Sistem di-reset.'); }
+      if (await confirmDialog('Reset sistem?', 'Semua data akan dipadam dan diganti dengan data contoh' + (shared() ? ' untuk semua pengguna.' : '.'), 'Reset')) { S.reset(); toast('Sistem di-reset.'); }
     }
   });
 
@@ -632,8 +633,58 @@
 
   $('#item-cat').insertAdjacentHTML('beforeend', S.CATEGORIES.map((c) => `<option>${esc(c.name)}</option>`).join(''));
 
-  S.load();
+  /* ---------------- Shared database status ---------------- */
+
+  const SYNC_TEXT = {
+    local: ['Peranti ini', 'Disimpan dalam peranti ini sahaja'],
+    connecting: ['Menyambung…', 'Menyambung ke pangkalan data…'],
+    online: ['Dikongsi', 'Disegerakkan dengan pangkalan data'],
+    offline: ['Luar talian', 'Luar talian — perubahan akan dihantar kemudian'],
+    auth: ['Perlu kata laluan', 'Perlu kata laluan untuk menyegerak'],
+  };
+  const DB_HELP = {
+    local: 'Data disimpan dalam pelayar peranti ini sahaja, jadi setiap telefon ada data sendiri. Untuk berkongsi data, sambungkan pangkalan data Upstash Redis di Vercel (lihat README).',
+    connecting: '',
+    online: 'Semua perubahan disimpan dalam pangkalan data dan dikemas kini pada semua peranti yang membuka laman ini dalam beberapa saat.',
+    offline: 'Pelayan tidak dapat dihubungi. Anda boleh terus merekod; perubahan disimpan dalam peranti ini dan dihantar apabila sambungan pulih.',
+    auth: 'Masukkan kata laluan untuk melihat dan mengemas kini data dikongsi.',
+  };
+  const shared = () => S.status().mode !== 'local';
+
+  function renderSync(st) {
+    const [short, long] = SYNC_TEXT[st.mode];
+    const extra = st.pending ? ` (${st.pending} menunggu)` : '';
+    const chip = $('#sync-chip');
+    chip.dataset.mode = st.mode;
+    $('.sync-text', chip).textContent = short + (st.pending ? ' · ' + st.pending : '');
+    chip.title = long + extra;
+    chip.setAttribute('aria-label', long + extra);
+    $('#nav-sync').textContent = long;
+    const dbState = $('#db-state');
+    dbState.dataset.mode = st.mode;
+    dbState.innerHTML = `<span class="dot"></span>${esc(long + extra)}`;
+    $('#db-help').textContent = DB_HELP[st.mode];
+    if (st.mode === 'auth' && !$('#dlg-password').open) openDialog($('#dlg-password'));
+  }
+
+  const pwForm = $('#form-password');
+  pwForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const pw = pwForm.password.value;
+    if (!pw) return formError(pwForm, 'Masukkan kata laluan.', pwForm.password);
+    await S.setPassword(pw);
+    if (S.status().mode === 'auth') return formError(pwForm, 'Kata laluan salah. Cuba lagi.', pwForm.password);
+    pwForm.reset();
+    closeDialog($('#dlg-password'));
+    toast('Berjaya masuk.');
+  });
+  // The password dialog can't be dismissed while the server still needs it.
+  $('#dlg-password').addEventListener('cancel', (e) => e.preventDefault());
+
+  S.onStatus(renderSync);
   S.onChange(render);
+  S.load(!EMBED && /^https?:$/.test(location.protocol));
+  renderSync(S.status());
   window.addEventListener('hashchange', route);
   syncThemeIcon();
   route();

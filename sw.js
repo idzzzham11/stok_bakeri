@@ -1,6 +1,6 @@
 /* StokBakeri service worker: makes the site load offline and installable.
  * Bump VERSION whenever any file in ASSETS changes. */
-const VERSION = 'stokbakeri-v1';
+const VERSION = 'stokbakeri-v2';
 const ASSETS = [
   './',
   'index.html',
@@ -32,6 +32,9 @@ self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
+
+  // Never cache the shared-data API.
+  if (url.origin === self.location.origin && url.pathname.includes('/api/')) return;
 
   // Own files: network first so updates show up, cache as offline fallback.
   if (url.origin === self.location.origin) {

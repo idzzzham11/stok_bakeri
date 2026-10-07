@@ -13,10 +13,29 @@ Stok semasa = stok awal + jumlah terima − jumlah keluar.
 
 ## Di mana data disimpan
 
-Data disimpan dalam pelayar (localStorage) **peranti yang digunakan sahaja**. Setiap telefon/komputer
-ada data sendiri. Untuk pindah data, guna **Laporan & Data → Muat turun sandaran**, kemudian
-**Pulihkan dari sandaran** di peranti lain. Kunci storan sama dengan versi lama StokBakeri, jadi
-jika laman ini diletak di alamat yang sama, data lama akan terus muncul.
+**Di Vercel dengan pangkalan data (disyorkan):** semua orang yang membuka laman melihat data yang
+sama. Perubahan muncul pada peranti lain dalam ~10 saat. Jika internet terputus, rekod tetap boleh
+dibuat; ia disimpan dalam telefon dan dihantar apabila sambungan pulih.
+
+**Tanpa pangkalan data** (hos statik lain, atau sebelum pangkalan data disambung): data disimpan
+dalam pelayar peranti itu sahaja. Status ditunjukkan di penjuru atas: *Dikongsi*, *Luar talian*
+atau *Peranti ini*.
+
+### Sambungkan pangkalan data di Vercel
+
+1. Buka projek di vercel.com → tab **Storage** → **Create Database** → pilih **Upstash for Redis**
+   (pelan percuma) → **Connect** ke projek ini. Vercel akan menambah `KV_REST_API_URL` dan
+   `KV_REST_API_TOKEN` secara automatik.
+2. (Disyorkan) **Settings → Environment Variables** → tambah `APP_PASSWORD` dengan kata laluan
+   pilihan anda. Tanpanya, sesiapa yang ada pautan boleh mengubah data.
+3. **Deployments** → ⋯ pada deployment terkini → **Redeploy**.
+
+Peranti pertama yang membuka laman selepas itu akan memuat naik datanya (atau data contoh) ke
+pangkalan data. Untuk membawa masuk bahan dari laman lama (edgeone.dev): di laman lama tekan
+**Eksport Excel**, kemudian di laman baharu **Laporan & Data → Import bahan dari Excel**. Setiap
+bahan bermula dengan stok semasanya; log transaksi lama tidak diimport.
+
+API: `api/data.js` (fungsi Vercel, tiada pakej npm diperlukan).
 
 ## Menerbitkan laman
 
