@@ -108,7 +108,7 @@
             <div class="card">
               <div class="card-head">
                 <h2>Perlu perhatian</h2>
-                <a class="link" href="#/bahan?status=rendah">Lihat semua <svg class="i"><use href="#i-arrow"/></svg></a>
+                <a class="link" href="#/bahan" data-filter-status="rendah">Lihat semua <svg class="i"><use href="#i-arrow"/></svg></a>
               </div>
               <ul class="list" id="attention-list"></ul>
             </div>
@@ -192,9 +192,10 @@
             <div class="card pad">
               <h2>Laporan</h2>
               <p class="muted small">Muat turun stok semasa dan log transaksi.</p>
+              <p class="muted small" data-embed-note hidden>Muat turun fail tidak tersedia dalam paparan ini. Buka laman penuh untuk muat turun laporan dan sandaran.</p>
               <div class="stack">
-                <button class="btn btn-green wide" id="btn-xlsx"><svg class="i"><use href="#i-down"/></svg>Laporan penuh Excel (.xlsx)</button>
-                <button class="btn btn-soft wide" id="btn-csv"><svg class="i"><use href="#i-down"/></svg>Ringkasan stok CSV</button>
+                <button class="btn btn-green wide" id="btn-xlsx" data-download><svg class="i"><use href="#i-down"/></svg>Laporan penuh Excel (.xlsx)</button>
+                <button class="btn btn-soft wide" id="btn-csv" data-download><svg class="i"><use href="#i-down"/></svg>Ringkasan stok CSV</button>
               </div>
             </div>
             <div class="card pad">
@@ -206,7 +207,7 @@
               <h2>Sandaran data</h2>
               <p class="muted small">Data disimpan dalam pelayar peranti ini sahaja. Simpan sandaran untuk pindah ke telefon/komputer lain atau elak kehilangan data.</p>
               <div class="stack">
-                <button class="btn btn-primary wide" id="btn-backup"><svg class="i"><use href="#i-down"/></svg>Muat turun sandaran (.json)</button>
+                <button class="btn btn-primary wide" id="btn-backup" data-download><svg class="i"><use href="#i-down"/></svg>Muat turun sandaran (.json)</button>
                 <label class="file-btn btn btn-soft wide"><svg class="i"><use href="#i-upload"/></svg>Pulihkan dari sandaran<input type="file" id="file-backup" accept=".json,application/json" hidden></label>
               </div>
             </div>

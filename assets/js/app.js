@@ -6,7 +6,11 @@
   const $ = (sel, root) => (root || document).querySelector(sel);
   const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
 
-  const XLSX_SRC = 'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
+  // STOK_EMBED is set when the page runs inside a sandboxed viewer that blocks downloads.
+  const EMBED = !!window.STOK_EMBED;
+  const XLSX_SRC = EMBED
+    ? 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
+    : 'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
 
   const STATUS = {
     cukup: { label: 'Mencukupi', cls: 'b-ok' },
@@ -27,10 +31,8 @@
 
   let view = 'papan';
   function route() {
-    const [path, query] = (location.hash.replace(/^#\/?/, '') || 'papan').split('?');
+    const path = location.hash.replace(/^#\/?/, '') || 'papan';
     view = TITLES[path] ? path : 'papan';
-    const params = new URLSearchParams(query || '');
-    if (view === 'bahan' && params.has('status')) $('#item-status').value = params.get('status');
     $$('.view').forEach((v) => { v.hidden = v.id !== 'view-' + view; });
     $$('.nav-links a').forEach((a) => {
       if (a.dataset.view === view) a.setAttribute('aria-current', 'page');
@@ -603,6 +605,15 @@
     }
   });
 
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('[data-filter-status]');
+    if (a) $('#item-status').value = a.dataset.filterStatus;
+  });
+  if (EMBED) {
+    $$('[data-download]').forEach((el) => { el.hidden = true; });
+    $$('[data-embed-note]').forEach((el) => { el.hidden = false; });
+  }
+
   $('#btn-lecturers').addEventListener('click', openLecturers);
   $('#active-lecturer').addEventListener('change', (e) => { S.setActiveLecturer(e.target.value); toast('Pensyarah aktif: ' + e.target.value); });
   $('#btn-xlsx').addEventListener('click', () => exportXlsx().catch(() => {}));
@@ -627,7 +638,7 @@
   syncThemeIcon();
   route();
 
-  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+  if (!EMBED && 'serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
     window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
   }
 })();

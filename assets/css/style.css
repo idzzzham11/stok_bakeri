@@ -134,7 +134,7 @@ a { color: inherit; }
 
 .main-col { flex: 1; min-width: 0; margin-left: var(--nav-w); display: flex; flex-direction: column; }
 .topbar {
-  position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 88%, transparent);
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: color-mix(in srgb, var(--bg) 88%, transparent);
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   padding: 14px 28px; border-bottom: 1px solid var(--border);
